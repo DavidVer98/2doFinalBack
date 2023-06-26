@@ -27,3 +27,6 @@ export const Detalle = sequelize.define('Detalle', {
         },
     },
 });
+
+Detalle.belongsTo(Consulta, { foreignKey: 'id_consulta', as: 'Consulta' });
+Consulta.hasMany(Detalle, { foreignKey: 'id_consulta' });

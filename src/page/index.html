@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sistema Medico de Consultas</title>
+</head>
+
+<body>
+<center>
+    <h1>Sistema Medico de Consultas</h1>
+
+    <table>
+        <tr>
+            <td colspan="2"><input type="button" name="btnVerifica" id="btnVerifica" value="Generar Consulta" style="width: 100%" onclick="redirecConsulta()"></td>
+        </tr>
+
+        <tr>
+            <td colspan="2"><input type="button" name="btnVerifica" id="btnVerifica" value="Generar Detalle" style="width: 100%" onclick="redirecDetalle()"></td>
+        </tr>
+
+    </table>
+
+</center>
+
+<script type="text/javascript">
+    function redirecConsulta()
+    {
+        window.location.href = "./consulta.html";
+    }
+
+    function redirecDetalle()
+    {
+        window.location.href = "./detalleConsulta.html";
+    }
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ingresar al Sistema</title>
+</head>
+
+<body>
+<center>
+    <h1>Ingresar al Sistema</h1>
+
+    <table>
+        <tr>
+            <td><label>Usuario:</label></td> <td><input type="text" id="usuario" name="usuario" required></td>
+        </tr>
+        <tr>
+            <td><label>Contraseña:</label></td> <td><input type="password" id="contrasena" name="contrasena" required></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="button" name="btnVerifica" id="btnVerifica" value="Iniciar Sesion" style="width: 100%" onclick="validar()"></td>
+        </tr>
+
+    </table>
+    <br><br>
+
+</center>
+
+</body>
+
+<script type="text/javascript">
+    function validar()
+    {
+        var usuario = document.getElementById("usuario").value;
+        var contrasena = document.getElementById("contrasena").value;
+
+        if (usuario =="edgard" && contrasena == "12345")
+
+        {
+            alert("Usuario y Contraseña Validos");
+            window.location.href = "../Consulta/index.html";
+
+        }
+        else
+        {
+            alert("Verifique los datos");
+        }
+    }
+</script>
+
+</html>
