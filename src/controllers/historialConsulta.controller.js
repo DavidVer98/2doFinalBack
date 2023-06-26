@@ -24,13 +24,11 @@ export const listaHistorial = async (req, res) => {
       ],
     };
 
-    // Aplicar filtros si se proporcionan los parámetros correspondientes
     if (searchText) {
       consulta.include[0].where = {
         [Op.or]: [
           { motivo: { [Op.like]: `%${searchText}%` } },
           { diagnostico: { [Op.like]: `%${searchText}%` } },
-          // Agregar más campos de Detalle si es necesario
         ],
       };
     }
