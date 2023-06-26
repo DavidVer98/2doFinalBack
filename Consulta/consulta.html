@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Procesar Consulta</title>
+    </head>
+    <body>
+        <h1>Procesar Consulta</h1>
+
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" value="" required>
+        <br><br>
+
+        <label for="id_medico">Medico:</label>
+        <select id="id_medico" name="id_medico" required>
+            <!-- Las opciones de medicos se agregarán dinámicamente -->
+        </select>
+        <br><br>
+
+        <label for="id_paciente">Paciente:</label>
+        <select id="id_paciente" name="id_paciente" required>
+            <!-- Las opciones de pacientes se agregarán dinámicamente -->
+        </select>
+        <br><br>
+
+        <button onclick="generarFicha()">Crear Consulta</button>
+        <br><br>
+
+        <button onclick="redirecDetalle()">Generar Detalle de Consulta</button>
+        <br><br>
+
+        <script>
+
+            var fechaInput = document.getElementById('fecha');
+            var fechaActual = new Date().toISOString().split('T')[0];
+            fechaInput.value = fechaActual;
+
+            async function cargarPacientes() {
+                try {
+                    const response = await fetch("http://localhost:3000/api/paciente");
+                    const data = await response.json();
+                
+                    const selectPaciente = document.getElementById("id_paciente");
+                
+                    data.data.forEach(paciente => {
+                        const option = document.createElement("option");
+                        option.value = paciente.id;
+                        option.textContent = paciente.nombre;
+                        selectPaciente.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error("Error al cargar los pacientes:", error);
+                    alert("Ocurrió un error al cargar los pacientes");
+                }
+            }
+
+            async function cargarMedicos() {
+                try {
+                    const response = await fetch("http://localhost:3000/api/medico");
+                    const data = await response.json();
+                
+                    const selectMedico = document.getElementById("id_medico");
+                
+                    data.data.forEach(medico => {
+                        const option = document.createElement("option");
+                        option.value = medico.id;
+                        option.textContent = medico.nombre;
+                        selectMedico.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error("Error al cargar los medicos:", error);
+                    alert("Ocurrió un error al cargar los medicos");
+                }
+            }
+        
+            async function generarFicha() {
+                const id_medico = document.getElementById("id_medico").value;
+                const id_paciente = document.getElementById("id_paciente").value;
+                const fecha = document.getElementById("fecha").value;
+        
+                const consultaData = {
+                    id_medico: id_medico,
+                    id_paciente: id_paciente,
+                    fecha: fecha
+                };
+                const generateConsulta = await fetch("http://localhost:3000/api/consulta", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(consultaData)
+                });
+                alert(`Consulta generada exitosamente`);
+            }
+
+            async function redirecDetalle(){
+                window.location.href = "detalleConsulta.html";
+            }
+        
+            cargarMedicos();
+            cargarPacientes();
+        </script>
+    </body>
+</html>
