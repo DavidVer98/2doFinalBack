@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Procesar Detalles</title>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <style>
+            body {
+                background-color: #bae0f6;
+            }
+            
+            h1 {
+                text-align: center;
+                color: #1d1d1de8;
+            }
+            
+            td {
+                background-color: #32cbfa;
+                color: #fff;
+                text-decoration: none;
+                padding: 4px 8px;
+                border-radius: 8px;
+            }
+            
+        </style>
+
+    </head>
+    <body>
+        <h1>Procesar Detalles de Consulta</h1>
+
+        <label for="id_consulta">Consulta Nro:</label>
+        <select id="id_consulta" name="id_consulta" required>
+            <!-- Las opciones de pacientes se agregarán dinámicamente -->
+        </select>
+        <br><br>
+
+        <label for="motivo">Motivo de la Consulta:</label>
+        <input type="text" id="motivo" name="motivo" required>
+        <br><br>
+
+        <label for="diagnostico">Diagnostico del Medico:</label>
+        <input type="text" id="diagnostico" name="diagnostico" required>
+        <br><br>
+
+        <label for="tratamiento">Tratamiento Recomendado:</label>
+        <input type="text" id="tratamiento" name="tratamiento" required>
+        <br><br>
+
+        <button onclick="generarDetalle()">Crear Detalle</button>
+        <br><br>
+
+        <script>
+
+            async function cargarConsultas() {
+                try {
+                    const response = await fetch("http://localhost:3000/api/consulta");
+                    const data = await response.json();
+                
+                    const selectConsulta = document.getElementById("id_consulta");
+                
+                    data.data.forEach(consulta => {
+                        const option = document.createElement("option");
+                        option.value = consulta.id;
+                        option.textContent = consulta.id;
+                        selectConsulta.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error("Error al cargar las consultas:", error);
+                    alert("Ocurrió un error al cargar las consultas");
+                }
+            }
+
+            async function generarDetalle() {
+                const id_consulta = document.getElementById("id_consulta").value;
+                const motivo = document.getElementById("motivo").value;
+                const diagnostico = document.getElementById("diagnostico").value;
+                const tratamiento = document.getElementById("tratamiento").value;
+
+                const detalleData = {
+                    id_consulta: id_consulta,
+                    motivo: motivo,
+                    diagnostico: diagnostico,
+                    tratamiento: tratamiento
+                };
+                const generateDetalle = await fetch("http://localhost:3000/api/detalle", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(detalleData)
+                });
+                alert(`Detalle generado exitosamente`);
+            }
+        
+            cargarConsultas();
+
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+
+        </script>
+    </body>
+</html>

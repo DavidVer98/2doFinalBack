@@ -31,3 +31,9 @@ export const Consulta = sequelize.define('Consulta', {
         onUpdate: 'cascade',
     },
 });
+
+Consulta.belongsTo(Medico, { foreignKey: 'id_medico', as: 'Medico' });
+Medico.hasMany(Consulta, { foreignKey: 'id_medico' });
+
+Consulta.belongsTo(Paciente, { foreignKey: 'id_paciente' });
+Paciente.hasMany(Consulta, { foreignKey: 'id_paciente' });

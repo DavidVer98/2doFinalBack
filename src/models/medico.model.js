@@ -37,3 +37,4 @@ export const Medico = sequelize.define('Medico', {
         type: DataTypes.TEXT,
     },
 });
+
