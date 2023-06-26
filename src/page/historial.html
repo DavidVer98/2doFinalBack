@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Prueba de listaHistorial</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Prueba de listaHistorial</h1>
+  <form id="filterForm">
+    <label for="searchText">Texto de búsqueda:</label>
+    <input type="text" id="searchText" name="searchText"><br><br>
+    <label for="especialidad">Especialidad:</label>
+    <input type="text" id="especialidad" name="especialidad"><br><br>
+    <label for="medico">Médico:</label>
+    <input type="text" id="medico" name="medico"><br><br>
+    <label for="paciente">Paciente:</label>
+    <input type="text" id="paciente" name="paciente"><br><br>
+    <label for="fecha">Fecha:</label>
+    <input type="text" id="fecha" name="fecha"><br><br>
+    <input type="submit" value="Filtrar">
+  </form>
+
+  <h2>Historial de consultas:</h2>
+  <table id="resultTable">
+    <thead>
+      <tr>
+        <th>Motivo</th>
+        <th>Diagnóstico</th>
+        <th>Tratamiento</th>
+        <th>Médico</th>
+        <th>Paciente</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody id="resultBody"></tbody>
+  </table>
+
+  <script>
+    const filterForm = document.getElementById('filterForm');
+    const resultBody = document.getElementById('resultBody');
+
+    filterForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const searchText = document.getElementById('searchText').value;
+      const especialidad = document.getElementById('especialidad').value;
+      const medico = document.getElementById('medico').value;
+      const paciente = document.getElementById('paciente').value;
+      const fecha = document.getElementById('fecha').value;
+
+      const url = new URL('http://localhost:3000/api/historialConsulta');
+      url.searchParams.append('searchText', searchText);
+      url.searchParams.append('especialidad', especialidad);
+      url.searchParams.append('medico', medico);
+      url.searchParams.append('paciente', paciente);
+      url.searchParams.append('fecha', fecha);
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Limpiar la tabla antes de mostrar los resultados
+        resultBody.innerHTML = '';
+
+        // Mostrar los resultados en la tabla
+        data.forEach((historial) => {
+          historial.Detalles.forEach((detalle) => {
+            const row = document.createElement('tr');
+            const motivoCell = document.createElement('td');
+            const diagnosticoCell = document.createElement('td');
+            const tratamientoCell = document.createElement('td');
+            const medicoCell = document.createElement('td');
+            const pacienteCell = document.createElement('td');
+            const fechaCell = document.createElement('td');
+
+            motivoCell.textContent = detalle.motivo;
+            diagnosticoCell.textContent = detalle.diagnostico;
+            tratamientoCell.textContent = detalle.tratamiento;
+            medicoCell.textContent = historial.Medico.nombre;
+            pacienteCell.textContent = historial.Paciente.nombre;
+            fechaCell.textContent = historial.fecha;
+
+            row.appendChild(motivoCell);
+            row.appendChild(diagnosticoCell);
+            row.appendChild(tratamientoCell);
+            row.appendChild(medicoCell);
+            row.appendChild(pacienteCell);
+            row.appendChild(fechaCell);
+
+            resultBody.appendChild(row);
+          });
+        });
+      } catch (error) {
+        console.error(error);
+        resultBody.innerHTML = '<tr><td colspan="6">Error al obtener los datos</td></tr>';
+      }
+    });
+
+    // Cargar la tabla por defecto al cargar la página
+    filterForm.dispatchEvent(new Event('submit'));
+  </script>
+</body>
+</html>

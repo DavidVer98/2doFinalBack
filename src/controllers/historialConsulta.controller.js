@@ -1,64 +1,60 @@
-import { Detalle, Consulta, Medico, Paciente } from "../models/index.js";
-import { Op } from "sequelize";
+import { Detalle, Consulta, Medico, Paciente } from '../models/index.js';
+import { Op } from 'sequelize';
 
 export const listaHistorial = async (req, res) => {
   try {
-    const { texto, especialidad, medico, paciente, fecha } = req.query;
+    const { searchText, especialidad, medico, paciente, fecha } = req.query;
 
-    console.log(req.query);
-
-    // Construir el objeto de filtro para los detalles
-    const detalleFiltro = {};
-    if (texto) {
-      detalleFiltro[Op.or] = [
-        { motivo: { [Op.like]: `%${texto}%` } },
-        { diagnostico: { [Op.like]: `%${texto}%` } },
-        { tratamiento: { [Op.like]: `%${texto}%` } },
-      ];
-    }
-
-    // Construir el objeto de filtro para la consulta
-    const consultaFiltro = {};
-    if (especialidad) {
-      consultaFiltro["$Medico.especialidad$"] = { [Op.like]: `%${especialidad}%` };
-    }
-    if (medico) {
-      consultaFiltro["$Medico.nombre$"] = { [Op.like]: `%${medico}%` };
-    }
-    if (paciente) {
-      consultaFiltro["$Paciente.nombre$"] = { [Op.like]: `%${paciente}%` };
-    }
-    if (fecha) {
-      consultaFiltro.fecha = { [Op.like]: `%${fecha}%` };
-    }
-
-    // Obtener el listado de detalles de la consulta
-    const detalles = await Detalle.findAll({
+    // Construir la consulta principal
+    const consulta = {
       include: [
         {
-          model: Consulta,
-          attributes: ["fecha"],
-          where: consultaFiltro,
-          include: [
-            {
-              model: Medico,
-              attributes: ["nombre", "especialidad"], // Agregar los atributos deseados del médico
-            },
-            {
-              model: Paciente,
-              attributes: ["nombre"], // Agregar los atributos deseados del paciente
-            },
-          ],
+          model: Detalle,
+          where: {},
+        },
+        {
+          model: Medico,
+          as: 'Medico',
+          where: {},
+        },
+        {
+          model: Paciente,
+          where: {},
         },
       ],
-      where: detalleFiltro,
-      attributes: ["motivo", "diagnostico", "tratamiento"],
-      raw: true,
-    });
+    };
 
-    res.json(detalles);
+    // Aplicar filtros si se proporcionan los parámetros correspondientes
+    if (searchText) {
+      consulta.include[0].where = {
+        [Op.or]: [
+          { motivo: { [Op.like]: `%${searchText}%` } },
+          { diagnostico: { [Op.like]: `%${searchText}%` } },
+          // Agregar más campos de Detalle si es necesario
+        ],
+      };
+    }
+    if (especialidad) {
+      consulta.include[1].where = { especialidad: { [Op.like]: `%${especialidad}%` } };
+    }
+    if (medico) {
+      consulta.include[1].where = { nombre: { [Op.like]: `%${medico}%` } };
+    }
+    if (paciente) {
+      consulta.include[2].where = { nombre: { [Op.like]: `%${paciente}%` } };
+    }
+    if (fecha) {
+      consulta.where = { fecha: { [Op.like]: `%${fecha}%` } };
+    }
+
+    // Realizar la consulta
+    const historial = await Consulta.findAll(consulta);
+
+    res.json(historial);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Ocurrió un error al obtener el historial de consultas." });
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener el historial de consultas' });
   }
 };
+
+export default listaHistorial;

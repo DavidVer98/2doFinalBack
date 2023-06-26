@@ -32,7 +32,7 @@ export const Consulta = sequelize.define('Consulta', {
     },
 });
 
-Consulta.belongsTo(Medico, { foreignKey: 'id_medico' });
+Consulta.belongsTo(Medico, { foreignKey: 'id_medico', as: 'Medico' });
 Medico.hasMany(Consulta, { foreignKey: 'id_medico' });
 
 Consulta.belongsTo(Paciente, { foreignKey: 'id_paciente' });
