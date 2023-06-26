@@ -1,3 +1,4 @@
+
 import { Detalle, Consulta, Medico, Paciente } from '../models/index.js';
 import { Op } from 'sequelize';
 
